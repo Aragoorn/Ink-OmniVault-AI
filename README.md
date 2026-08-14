@@ -1,3 +1,5 @@
+<img width="990" height="948" alt="test compile" src="https://github.com/user-attachments/assets/9a14946c-1598-4d5b-95b6-3f105b6bdde4" />
+
 # Ink OmniVault AI
 
 **Upgradeable Smart Account (ERC-4337) optimized for the Ink Network (OP Stack / Superchain)**
