@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ink OmniVault AI — Professional Live Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1321;
+      --card: rgba(20, 27, 45, 0.75);
+      --border: rgba(99, 102, 241, 0.15);
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #a78bfa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(167, 139, 250, 0.08), transparent);
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 11, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .network-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      display: none;
+    }
+
+    .network-badge.wrong {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(99,102,241,0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.12);
+      color: #a5b4fc;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(99,102,241,0.25);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(to right, #fff 30%, #c4b5fd);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.15rem;
+      max-width: 620px;
+      margin: 0 auto 32px;
+    }
+
+    /* ========== LAYOUT ========== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .section {
+      margin-bottom: 56px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+    }
+    .card:hover {
+      border-color: rgba(99,102,241,0.35);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    /* ========== INTERACTIVE PANEL ========== */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 13px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: rgba(99,102,241,0.15);
+      border-color: var(--primary);
+      color: #c7d2fe;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: rgba(0,0,0,0.25);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: ui-monospace, monospace;
+      word-break: break-all;
+    }
+
+    .success { color: var(--success); }
+    .danger { color: var(--danger); }
+    .muted { color: var(--muted); }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    pre {
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 13px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin-top: 12px;
+      color: #cbd5e1;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-top: 14px;
+      display: none;
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+    }
+    .alert-success {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #86efac;
+    }
+
+    .protocol-box {
+      background: rgba(0,0,0,0.25);
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      margin-top: 12px;
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    a { color: #a5b4fc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 700px) {
+      .header-inner { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== STICKY HEADER ========== -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>Ink OmniVault AI</span>
+      </div>
+
+      <div class="header-right">
+        <div class="network-badge" id="networkBadge">Connected</div>
+        <button class="btn btn-primary" id="connectBtn" onclick="connectWallet()">
+          <span id="connectText">Connect Wallet</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <div class="badge">FOR GRANT REVIEWERS • INK NETWORK</div>
+    <h1>Professional Live Demo</h1>
+    <p>
+      Secure AI Agent infrastructure with Session Keys, daily limits, risk scoring, cooldown and circuit breaker — built natively for Ink.
+    </p>
+  </section>
+
+  <div class="container">
+
+    <!-- Features -->
+    <section class="section">
+      <h2 class="section-title">Core Capabilities</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>🤖 AI Agent + Policy</h3>
+          <p>Register agents with daily spending limits and risk scores. Full on-chain policy enforcement.</p>
+        </div>
+        <div class="card">
+          <h3>🔑 Session Keys</h3>
+          <p>Temporary keys with spending limit and expiry. Ideal for automated agents.</p>
+        </div>
+        <div class="card">
+          <h3>⏱️ Cooldown & Safety</h3>
+          <p>Trade cooldown + consecutive failure tracking + circuit breaker (pause).</p>
+        </div>
+        <div class="card">
+          <h3>🛡️ Role-Based Access</h3>
+          <p>Admin, Operator, Guardian roles with two-step admin transfer.</p>
+        </div>
+        <div class="card">
+          <h3>📜 Production Ready</h3>
+          <p>UUPS upgradeable, emergency withdraw, social recovery support.</p>
+        </div>
+        <div class="card">
+          <h3>🔗 Ecosystem Native</h3>
+          <p>Whitelisted for Velodrome, Tydro and Nado on Ink.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Live Panel -->
+    <section class="section">
+      <h2 class="section-title">Live Contract Interaction</h2>
+      <div class="panel">
+        <div class="form-group">
+          <label>Vault Proxy Address</label>
+          <input type="text" id="vaultAddress" placeholder="0x... (your deployed proxy)" value="0xFb47b3F8A7BD7EB6A7844DbF3930f82D360d78a3" />
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('status')">Status</button>
+          <button class="tab" onclick="switchTab('agent')">Agent Policy</button>
+          <button class="tab" onclick="switchTab('session')">Session Key</button>
+          <button class="tab" onclick="switchTab('passkey')">Passkey</button>
+        </div>
+
+        <!-- Tab: Status -->
+        <div id="tab-status">
+          <button class="btn btn-primary" onclick="checkBasicStatus()" id="btnStatus">
+            Read Version / Paused / Balance / Failures
+          </button>
+          <div class="status-grid" id="basicStats" style="display:none;">
+            <div class="stat">
+              <div class="stat-label">Version</div>
+              <div class="stat-value" id="valVersion">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Paused</div>
+              <div class="stat-value" id="valPaused">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Consecutive Failures</div>
+              <div class="stat-value" id="valFailures">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Vault ETH Balance</div>
+              <div class="stat-value" id="valBalance">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Your Address</div>
+              <div class="stat-value" id="valWallet">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Agent -->
+        <div id="tab-agent" style="display:none;">
+          <div class="form-group">
+            <label>AI Agent Address</label>
+            <input type="text" id="agentAddress" placeholder="0x... agent address" />
+          </div>
+          <button class="btn btn-primary" onclick="checkAgentPolicy()">Read Agent Policy</button>
+          <div class="status-grid" id="agentStats" style="display:none; margin-top:20px;">
+            <div class="stat">
+              <div class="stat-label">isActive</div>
+              <div class="stat-value" id="valIsActive">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Daily Limit (ETH)</div>
+              <div class="stat-value" id="valDailyLimit">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Risk Score</div>
+              <div class="stat-value" id="valRiskScore">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Spent Today (ETH)</div>
+              <div class="stat-value" id="valSpentToday">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Session -->
+        <div id="tab-session" style="display:none;">
+          <div class="form-group">
+            <label>Session Key Address</label>
+            <input type="text" id="sessionAddress" placeholder="0x... session key" />
+          </div>
+          <button class="btn btn-primary" onclick="checkSessionKey()">Read Session Key</button>
+          <div class="status-grid" id="sessionStats" style="display:none; margin-top:20px;">
+            <div class="stat">
+              <div class="stat-label">isActive</div>
+              <div class="stat-value" id="valSkActive">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Spending Limit (ETH)</div>
+              <div class="stat-value" id="valSkLimit">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Valid Until</div>
+              <div class="stat-value" id="valSkUntil">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Passkey -->
+        <div id="tab-passkey" style="display:none;">
+          <div class="form-group">
+            <label>Account Address</label>
+            <input type="text" id="passkeyAddress" placeholder="0x... account address" />
+          </div>
+          <button class="btn btn-primary" onclick="checkPasskey()">Read Passkey</button>
+          <div class="status-grid" id="passkeyStats" style="display:none; margin-top:20px;">
+            <div class="stat">
+              <div class="stat-label">isActive</div>
+              <div class="stat-value" id="valPkActive">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Valid Until</div>
+              <div class="stat-value" id="valPkUntil">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-error" id="errorBox"></div>
+        <div class="alert alert-success" id="successBox"></div>
+      </div>
+    </section>
+
+    <!-- Native Protocols -->
+    <section class="section">
+      <h2 class="section-title">Native Ink Protocols (Whitelisted by Default)</h2>
+      <div class="panel">
+        <div class="protocol-box">
+          <div><strong>Velodrome Router:</strong> 0x01D40099fCD87C018969B0e8D4aB1633Fb34763C</div>
+          <div><strong>Tydro Pool:</strong> 0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA</div>
+          <div><strong>Nado Endpoint:</strong> 0x05ec92D78ED421f3D3Ada77FFdE167106565974E</div>
+        </div>
+        <p style="margin-top:14px; color:var(--muted); font-size:0.92rem;">
+          These addresses are hardcoded as whitelisted targets in the contract for seamless integration with the Ink ecosystem.
+        </p>
+      </div>
+    </section>
+
+    <!-- How to run full demo -->
+    <section class="section">
+      <h2 class="section-title">Full Professional Demo (Recommended for Reviewers)</h2>
+      <div class="panel">
+        <p style="color:var(--muted); margin-bottom:16px;">
+          The complete demo script automatically registers an agent, sets a session key, waits for cooldown and executes controlled transfers.
+        </p>
+        <pre>echo "VAULT_ADDRESS=0xYourProxyAddress" >> .env
+npx hardhat run scripts/demo.ts --network inkSepolia</pre>
+        <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn btn-secondary" href="https://explorer-sepolia.inkonchain.com" target="_blank">Sepolia Explorer</a>
+          <a class="btn btn-secondary" href="https://explorer.inkonchain.com" target="_blank">Mainnet Explorer</a>
+          <a class="btn btn-secondary" href="https://docs.inkonchain.com" target="_blank">Ink Docs</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- What it proves -->
+    <section class="section">
+      <h2 class="section-title">What This Demo Proves</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>✅ Secure AI Agent Infra</h3>
+          <p>Full agent lifecycle with on-chain policy controls on Ink.</p>
+        </div>
+        <div class="card">
+          <h3>✅ Session Key Model</h3>
+          <p>Time-bound & spending-limited keys ready for automation.</p>
+        </div>
+        <div class="card">
+          <h3>✅ Production Safety</h3>
+          <p>Cooldown, circuit breaker, roles and emergency mechanisms.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>Ink OmniVault AI — Built for the Ink ecosystem grant review process.</p>
+    <p style="margin-top:6px; opacity:0.7;">Live Demo: <a href="https://ink-omnivault.netlify.app/">https://ink-omnivault.netlify.app/</a></p>
+  </footer>
+
+  <script>
+    const ABI = [
+      "function version() view returns (string)",
+      "function paused() view returns (bool)",
+      "function consecutiveFailures() view returns (uint256)",
+      "function getAgentPolicy(address agent) view returns (tuple(bool isActive, uint256 dailyLimit, uint256 spentToday, uint48 lastResetTime, uint8 riskScore))",
+      "function getSessionKey(address key) view returns (tuple(bool isActive, uint48 validUntil, uint256 spendingLimit, uint256 spent, uint8 maxRiskScore))",
+      "function getPasskey(address account) view returns (tuple(bytes32 pubKeyX, bytes32 pubKeyY, bool isActive, uint48 validUntil))"
+    ];
+
+    let provider = null;
+    let signer = null;
+    let currentAccount = null;
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-status').style.display = name === 'status' ? 'block' : 'none';
+      document.getElementById('tab-agent').style.display = name === 'agent' ? 'block' : 'none';
+      document.getElementById('tab-session').style.display = name === 'session' ? 'block' : 'none';
+      document.getElementById('tab-passkey').style.display = name === 'passkey' ? 'block' : 'none';
+      hideAlerts();
+    }
+
+    function hideAlerts() {
+      document.getElementById('errorBox').style.display = 'none';
+      document.getElementById('successBox').style.display = 'none';
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorBox');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('successBox').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successBox');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorBox').style.display = 'none';
+    }
+
+    async function connectWallet() {
+      if (!window.ethereum) {
+        showError("Please install MetaMask or a compatible wallet.");
+        return;
+      }
+
+      try {
+        provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        currentAccount = await signer.getAddress();
+
+        document.getElementById('connectText').textContent = 
+          currentAccount.slice(0, 6) + "..." + currentAccount.slice(-4);
+        
+        document.getElementById('valWallet').textContent = 
+          currentAccount.slice(0, 6) + "..." + currentAccount.slice(-4);
+
+        const network = await provider.getNetwork();
+        const chainId = Number(network.chainId);
+        const badge = document.getElementById('networkBadge');
+        badge.style.display = 'inline-flex';
+
+        if (chainId === 57073) {
+          badge.textContent = "Ink Mainnet";
+          badge.classList.remove('wrong');
+        } else if (chainId === 763373) {
+          badge.textContent = "Ink Sepolia";
+          badge.classList.remove('wrong');
+        } else {
+          badge.textContent = "Wrong Network (" + chainId + ")";
+          badge.classList.add('wrong');
+          showError("Please switch to Ink Mainnet (57073) or Ink Sepolia (763373)");
+        }
+
+        showSuccess("Wallet connected successfully");
+      } catch (e) {
+        console.error(e);
+        showError("Connection failed: " + (e.shortMessage || e.message));
+      }
+    }
+
+    function getContract() {
+      const address = document.getElementById('vaultAddress').value.trim();
+      if (!address || !address.startsWith("0x") || address.length < 42) {
+        throw new Error("Please enter a valid Vault Proxy address");
+      }
+      if (!provider) {
+        provider = new ethers.JsonRpcProvider("https://rpc-gel-sepolia.inkonchain.com");
+      }
+      return new ethers.Contract(address, ABI, provider);
+    }
+
+    async function checkBasicStatus() {
+      hideAlerts();
+      const btn = document.getElementById('btnStatus');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> Reading...';
+
+      try {
+        const contract = getContract();
+        const address = document.getElementById('vaultAddress').value.trim();
+
+        const [version, paused, failures, balance] = await Promise.all([
+          contract.version(),
+          contract.paused(),
+          contract.consecutiveFailures(),
+          provider.getBalance(address)
+        ]);
+
+        document.getElementById('valVersion').textContent = version;
+        document.getElementById('valPaused').innerHTML = paused 
+          ? '<span class="danger">Yes 🔴</span>' 
+          : '<span class="success">No ✅</span>';
+        document.getElementById('valFailures').textContent = failures.toString();
+        document.getElementById('valBalance').textContent = parseFloat(ethers.formatEther(balance)).toFixed(6) + " ETH";
+        document.getElementById('basicStats').style.display = 'grid';
+        showSuccess("Status loaded successfully");
+      } catch (e) {
+        console.error(e);
+        showError(e.shortMessage || e.message || "Failed to read contract");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Read Version / Paused / Balance / Failures';
+      }
+    }
+
+    async function checkAgentPolicy() {
+      hideAlerts();
+      const agent = document.getElementById('agentAddress').value.trim();
+      if (!agent || !agent.startsWith("0x")) {
+        showError("Please enter a valid Agent address");
+        return;
+      }
+
+      try {
+        const contract = getContract();
+        const policy = await contract.getAgentPolicy(agent);
+
+        document.getElementById('valIsActive').innerHTML = policy.isActive 
+          ? '<span class="success">true</span>' 
+          : '<span class="muted">false</span>';
+        document.getElementById('valDailyLimit').textContent = ethers.formatEther(policy.dailyLimit);
+        document.getElementById('valRiskScore').textContent = policy.riskScore.toString();
+        document.getElementById('valSpentToday').textContent = ethers.formatEther(policy.spentToday);
+        document.getElementById('agentStats').style.display = 'grid';
+        showSuccess("Agent policy loaded");
+      } catch (e) {
+        console.error(e);
+        showError(e.shortMessage || e.message || "Failed to read agent policy");
+      }
+    }
+
+    async function checkSessionKey() {
+      hideAlerts();
+      const key = document.getElementById('sessionAddress').value.trim();
+      if (!key || !key.startsWith("0x")) {
+        showError("Please enter a valid Session Key address");
+        return;
+      }
+
+      try {
+        const contract = getContract();
+        const sk = await contract.getSessionKey(key);
+
+        document.getElementById('valSkActive').innerHTML = sk.isActive 
+          ? '<span class="success">true</span>' 
+          : '<span class="muted">false</span>';
+        document.getElementById('valSkLimit').textContent = ethers.formatEther(sk.spendingLimit);
+        
+        const until = Number(sk.validUntil);
+        document.getElementById('valSkUntil').textContent = until > 0 
+          ? new Date(until * 1000).toLocaleString() 
+          : "—";
+
+        document.getElementById('sessionStats').style.display = 'grid';
+        showSuccess("Session key loaded");
+      } catch (e) {
+        console.error(e);
+        showError(e.shortMessage || e.message || "Failed to read session key");
+      }
+    }
+
+    async function checkPasskey() {
+      hideAlerts();
+      const account = document.getElementById('passkeyAddress').value.trim();
+      if (!account || !account.startsWith("0x")) {
+        showError("Please enter a valid account address");
+        return;
+      }
+
+      try {
+        const contract = getContract();
+        const pk = await contract.getPasskey(account);
+
+        document.getElementById('valPkActive').innerHTML = pk.isActive 
+          ? '<span class="success">true</span>' 
+          : '<span class="muted">false</span>';
+        
+        const until = Number(pk.validUntil);
+        document.getElementById('valPkUntil').textContent = until > 0 
+          ? new Date(until * 1000).toLocaleString() 
+          : "No expiry";
+
+        document.getElementById('passkeyStats').style.display = 'grid';
+        showSuccess("Passkey loaded");
+      } catch (e) {
+        console.error(e);
+        showError(e.shortMessage || e.message || "Failed to read passkey");
+      }
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', () => location.reload());
+      window.ethereum.on('chainChanged', () => location.reload());
+    }
+  </script>
+</body>
+</html>
