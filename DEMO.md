@@ -1,6 +1,6 @@
 # Ink OmniVault AI — Live Demo Guide
 
-**For Grant Reviewers & Ecosystem Team**
+**For Grant Reviewers & Ecosystem Team** 
 
 ---
 
