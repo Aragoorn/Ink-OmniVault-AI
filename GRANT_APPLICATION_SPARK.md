@@ -3,7 +3,7 @@
 **One-liner:**  
 A production-ready UUPS Smart Account on Ink designed specifically for autonomous AI agents, with built-in risk controls, session keys, and native integrations with Tydro, Nado, and Velodrome.
 
----
+----
 
 ## Live Demo Website
 
